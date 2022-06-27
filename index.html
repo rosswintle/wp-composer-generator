@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/dist/styles.css" rel="stylesheet">
+    <title>WP Composer Generator</title>
+</head>
+<body class="w-full md:max-w-6xl mx-auto px-8 py-6">
+    <main x-data="jsonData">
+        <h1 class="text-3xl font-bold mb-4">WP Composer Generator editor</h1>
+        <p class="mb-2">This tool lets you create and edit WordPress composer.json files. It is NOT a general purpose composer.json editor.</p>
+        <p class="mb-2">Saving WILL OVERWRITE the local file. So be careful. Edit a copy if needed. I accept no responsibility for loss of data.</p>
+        <p class="mb-2">Does NOT work on Firefox. Does NOT handle nested data in any way.</p>
+        <div id="buttons" class="mb-4">
+            <button class="border-2 rounded px-4 py-2 mr-2" @click="newFile">New file</button>
+            <button class="border-2 rounded px-4 py-2 mr-2" @click="loadFile">Open file</button>
+            <button class="border-2 rounded px-4 py-2 mr-2" @click="saveFile">Save</button>
+        </div>
+
+        <h2 class="text-xl font-bold mb-3">Settings</h2>
+        <table class="w-full">
+            <tr>
+                <td><label>Your package name:</label></td>
+                <td><input class="w-full" type="text" x-model="data.name"></td>
+            </tr>
+            <tr>
+                <td><label>WordPress version:</label></td>
+                <td><input class="w-full" type="text" x-model="data.require['johnpbloch/wordpress']"></td>
+            </tr>
+            <tr>
+                <td><label>WordPress directory:</label></td>
+                <td><input class="w-full" type="text" x-model="data.extra['wordpress-install-dir']"></td>
+            </tr>
+        </table>
+
+        <textarea
+            cols=80
+            rows=20
+            x-text="jsonText"
+            class="block border mt-6 font-mono px-4 py-4"></textarea>
+    </main>
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('jsonData', () => ({
+                open: false,
+
+                fileHandle: null,
+
+                jsonRaw: '',
+
+                isDataInitialized: false,
+
+                wordpressDirectory: 'wordpress',
+
+                data: {
+                    name: '',
+                    require:
+                        {
+                            'johnpbloch/wordpress': ''
+                        },
+                    extra:
+                        {
+                            'wordpress-install-dir': ''
+                        }
+                },
+
+                init() {
+                    this.$watch("data.extra['wordpress-install-dir']", this.updateWordPressDirectory.bind(this));
+                },
+
+                updateWordPressDirectory(newDirectory) {
+                    console.log('Updating WP DIR');
+                    this.data.extra['installer-paths'] = {};
+                    this.data.extra['installer-paths'][newDirectory + '/wp-content/plugins/{$name}/'] = [
+                        "type:wordpress-plugin"
+                    ],
+                    this.data.extra['installer-paths'][newDirectory + '/wp-content/themes/{$name}/'] = [
+                        "type:wordpress-theme"
+                    ]
+                },
+
+                get jsonText() {
+                    return this.isDataInitialized ? JSON.stringify(this.data, null, 4) : '';
+                },
+
+                newFile() {
+                    this.data = JSON.parse(window.defaultJson);
+                    this.isDataInitialized = true;
+                },
+
+                async loadFile() {
+                    const pickerOptions = {
+                        types: [
+                            {
+                                description: 'JSON',
+                                accept: {
+                                    'application/json': ['.json']
+                                }
+                            }
+                        ],
+                    };
+
+                    // open file picker
+                    [this.fileHandle] = await window.showOpenFilePicker( pickerOptions );
+
+                    if (this.fileHandle.kind === 'file') {
+                        const file = await this.fileHandle.getFile();
+                        this.json = await file.text();
+                        this.data = JSON.parse(this.json);
+                        // this.loadArrays();
+                        console.log(this.data);
+                        console.log(this.things);
+
+                        this.isDataInitialized = true;
+
+                        await writable.close();
+                    }
+                },
+
+                async saveFile() {
+                    const pickerOptions = {
+                        suggestedName: 'composer.json',
+                        types: [
+                            {
+                                description: 'JSON',
+                                accept: {
+                                    'application/json': ['.json']
+                                }
+                            }
+                        ],
+                    };
+                    this.fileHandle = await window.showSaveFilePicker(pickerOptions);
+                    const writable = await this.fileHandle.createWritable();
+                    await writable.write(JSON.stringify(this.data, null, 2));
+                    await writable.close();
+                }
+            }));
+        });
+    </script>
+
+    <script>
+        window.defaultJson = `
+{
+  "name": "your_organisation_or_name/your_project_name",
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://wpackagist.org",
+      "only": [
+"wpackagist-plugin/*",
+"wpackagist-theme/*"
+]
+}
+],
+"require": {
+"johnpbloch/wordpress": "^6.0"
+},
+"config": {
+"allow-plugins": {
+"johnpbloch/wordpress-core-installer": true,
+"composer/installers": true
+}
+},
+"extra": {
+"wordpress-install-dir": "public",
+"installer-paths": {
+"public/wp-content/plugins/{$name}/": [
+"type:wordpress-plugin"
+],
+"public/wp-content/themes/{$name}/": [
+"type:wordpress-theme"
+]
+}
+}
+}
+        `;
+    </script>
+
+    <script src="//unpkg.com/alpinejs" defer></script>
+
+    <!-- Fathom - beautiful, simple website analytics -->
+    <!-- <script src="https://curious-ready.veryuseful.app/script.js" data-site="QUFUDPNE" defer></script> -->
+    <!-- / Fathom -->
+
+</body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "name": "wp-composer-generator",
+  "version": "1.0.0",
+  "description": "A simple generator for composer.json files for new WordPress projects",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rosswintle/wp-composer-generator.git"
+  },
+  "author": "Ross Wintle",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rosswintle/wp-composer-generator/issues"
+  },
+  "homepage": "https://github.com/rosswintle/wp-composer-generator#readme",
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.2",
+    "tailwindcss": "^3.0.24"
+  }
+}
