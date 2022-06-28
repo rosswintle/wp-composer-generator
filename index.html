@@ -23,19 +23,19 @@
         </div>
     </div>
 
-    <main class="w-full md:max-w-6xl mx-auto px-8 py-6" x-data="jsonData">
+    <main class="w-full md:max-w-4xl mx-auto px-8 py-6" x-data="jsonData">
         <h1 class="text-3xl font-bold mb-4">WP Composer Generator editor</h1>
         <p class="mb-2">This is experimental/alpha/work-in-progress, but it does work!</p>
         <p class="mb-2">This tool lets you create and edit WordPress composer.json files. It is NOT a general purpose composer.json editor.</p>
         <p class="mb-2">File open/save is not supported on Firefox, but you can generate new files.</p>
-        <div id="buttons" class="mb-4">
+        <div id="buttons" class="mb-8">
             <button class="border-2 rounded px-4 py-2 mr-2" @click="newFile">New file</button>
             <button class="border-2 rounded px-4 py-2 mr-2" @click="loadFile">Open file</button>
             <button class="border-2 rounded px-4 py-2 mr-2" @click="saveFile">Save</button>
         </div>
 
         <h2 class="text-xl font-bold mb-3">Settings</h2>
-        <table class="w-full">
+        <table class="w-full mb-8">
             <tr>
                 <td><label>Your package name:</label></td>
                 <td><input class="w-full" type="text" x-model="data.name"></td>
@@ -50,6 +50,7 @@
             </tr>
         </table>
 
+        <h2 class="text-xl font-bold mb-3">composer.json output</h2>
         <textarea
             cols=80
             rows=20
