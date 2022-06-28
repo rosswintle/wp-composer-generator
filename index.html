@@ -7,8 +7,23 @@
     <link href="/dist/styles.css" rel="stylesheet">
     <title>WP Composer Generator</title>
 </head>
-<body class="w-full md:max-w-6xl mx-auto px-8 py-6">
-    <main x-data="jsonData">
+<body>
+    <div id="banner" class="relative bg-indigo-600">
+        <div class="max-w-7xl mx-auto py-3 px-3 sm:px-6 lg:px-8">
+            <div class="pr-16 sm:text-center sm:px-16">
+                <p class="font-medium text-white">
+                    <span id="mobile-banner-text" class="md:hidden"><strong>AD: </strong>Turbo Admin is the WordPress command palette for ALL your sites!</span>
+                    <span id="desktop-banner-text" class="hidden md:inline"><strong>AD: </strong>Turbo Admin is the WordPress command palette - and more! - for ALL your sites!</span>
+                    <span class="block sm:ml-2 sm:inline-block">
+                        <a href="https://turbo-admin.com/" class="text-white font-bold underline"> Learn more <span
+                                aria-hidden="true">&rarr;</span></a>
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <main class="w-full md:max-w-6xl mx-auto px-8 py-6" x-data="jsonData">
         <h1 class="text-3xl font-bold mb-4">WP Composer Generator editor</h1>
         <p class="mb-2">This is experimental/alpha/work-in-progress, but it does work!</p>
         <p class="mb-2">This tool lets you create and edit WordPress composer.json files. It is NOT a general purpose composer.json editor.</p>
