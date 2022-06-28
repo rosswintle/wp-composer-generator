@@ -10,9 +10,9 @@
 <body class="w-full md:max-w-6xl mx-auto px-8 py-6">
     <main x-data="jsonData">
         <h1 class="text-3xl font-bold mb-4">WP Composer Generator editor</h1>
+        <p class="mb-2">This is experimental/alpha/work-in-progress, but it does work!</p>
         <p class="mb-2">This tool lets you create and edit WordPress composer.json files. It is NOT a general purpose composer.json editor.</p>
-        <p class="mb-2">Saving WILL OVERWRITE the local file. So be careful. Edit a copy if needed. I accept no responsibility for loss of data.</p>
-        <p class="mb-2">Does NOT work on Firefox. Does NOT handle nested data in any way.</p>
+        <p class="mb-2">File open/save is not supported on Firefox, but you can generate new files.</p>
         <div id="buttons" class="mb-4">
             <button class="border-2 rounded px-4 py-2 mr-2" @click="newFile">New file</button>
             <button class="border-2 rounded px-4 py-2 mr-2" @click="loadFile">Open file</button>
