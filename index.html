@@ -47,8 +47,6 @@
             Alpine.data('jsonData', () => ({
                 open: false,
 
-                fileHandle: null,
-
                 jsonRaw: '',
 
                 isDataInitialized: false,
@@ -63,7 +61,8 @@
                         },
                     extra:
                         {
-                            'wordpress-install-dir': ''
+                            'wordpress-install-dir': '',
+                            'installer-paths': {}
                         }
                 },
 
@@ -72,14 +71,19 @@
                 },
 
                 updateWordPressDirectory(newDirectory) {
-                    console.log('Updating WP DIR');
-                    this.data.extra['installer-paths'] = {};
-                    this.data.extra['installer-paths'][newDirectory + '/wp-content/plugins/{$name}/'] = [
-                        "type:wordpress-plugin"
-                    ],
-                    this.data.extra['installer-paths'][newDirectory + '/wp-content/themes/{$name}/'] = [
-                        "type:wordpress-theme"
-                    ]
+                    const newInstallerPaths = {};
+                    if (! this?.data?.extra['installer-paths']) {
+                        return;
+                    }
+
+                    Object.keys(this.data.extra['installer-paths']).forEach(
+                        (key) => {
+                            const newPath = key.replace(/(.*)(\/[^\/]+\/\{\$name\})/, `${newDirectory}$2`);
+                            newInstallerPaths[newPath] = this.data.extra['installer-paths'][key];
+                        }
+                    );
+
+                    this.data.extra['installer-paths'] = newInstallerPaths;
                 },
 
                 get jsonText() {
@@ -104,19 +108,17 @@
                     };
 
                     // open file picker
-                    [this.fileHandle] = await window.showOpenFilePicker( pickerOptions );
+                    let fileHandle = null;
+                    [fileHandle] = await window.showOpenFilePicker( pickerOptions );
 
-                    if (this.fileHandle.kind === 'file') {
-                        const file = await this.fileHandle.getFile();
-                        this.json = await file.text();
-                        this.data = JSON.parse(this.json);
-                        // this.loadArrays();
-                        console.log(this.data);
-                        console.log(this.things);
+                    if (fileHandle.kind === 'file') {
+                        const file = await fileHandle.getFile();
+                        const jsonRaw = await file.text();
+                        this.data = JSON.parse(jsonRaw);
+                        console.log(jsonRaw);
+                        console.log(JSON.parse(jsonRaw));
 
                         this.isDataInitialized = true;
-
-                        await writable.close();
                     }
                 },
 
@@ -132,8 +134,8 @@
                             }
                         ],
                     };
-                    this.fileHandle = await window.showSaveFilePicker(pickerOptions);
-                    const writable = await this.fileHandle.createWritable();
+                    const fileHandle = await window.showSaveFilePicker(pickerOptions);
+                    const writable = await fileHandle.createWritable();
                     await writable.write(JSON.stringify(this.data, null, 2));
                     await writable.close();
                 }
